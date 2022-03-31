@@ -1,9 +1,16 @@
 const express = require('express')
-const { registerUser } = require('../controllers/user.controller')
+const { registerUser, userLogin } = require('../controllers/user.controller')
+const { registerRules, validator } = require('../middlewares/validator')
+const isAuth = require('../middlewares/passport-setup')
 
 
 const Router = express.Router()
 
-Router.post('/register', registerUser)
+Router.post('/register', registerRules(), validator, registerUser)
+Router.post('/login', userLogin)
+
+Router.get('/currentuser', isAuth(), (req, res) => {
+    res.json(req.user)
+})
 
 module.exports = Router
