@@ -1,10 +1,30 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Navigate } from 'react-router-dom'
+import { userLogin } from '../JS/actions/userAction'
+import Loader from './Loader'
 
 
 const UserLogin = () => {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
+    const dispatch = useDispatch()
 
-    return (<div className="auth-wrapper">
+    const loading = useSelector(state => state.userReducer.loading)
+    const isAuth = useSelector(state => state.userReducer.isAuth)
+
+    const login = (e) => {
+        const cred = { email, password }
+        e.preventDefault();
+
+        dispatch(userLogin(cred))
+
+        setEmail("")
+        setPassword("")
+    }
+
+    return loading ? <Loader /> : isAuth ? <Navigate to='/profile' /> : (<div className="auth-wrapper">
         <div className="auth-inner">
             <form>
                 <h3>Sign In</h3>
@@ -15,7 +35,8 @@ const UserLogin = () => {
                         type="email"
                         className="form-control"
                         placeholder="Enter email"
-
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
                     />
                 </div>
 
@@ -25,7 +46,8 @@ const UserLogin = () => {
                         type="password"
                         className="form-control"
                         placeholder="Enter password"
-
+                        onChange={(e) => setPassword(e.target.value)}
+                        value={password}
                     />
                 </div>
 
@@ -45,6 +67,7 @@ const UserLogin = () => {
                 <button
                     type="submit"
                     className="btn btn-primary btn-block"
+                    onClick={login}
                 >
                     Sign in
                 </button>
